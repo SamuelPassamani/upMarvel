@@ -3,260 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Heroico - Marvel GP</title>
+    <title>Upload Heroico</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Bangers&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Bangers&display=swap" rel="stylesheet">
     <style>
-        /* Marvel Theme Variables */
-        :root {
-            --marvel-red: #ED1D24;
-            --marvel-blue: #0078D4;
-            --marvel-yellow: #FFD700;
-            --marvel-black: #1A1A1A;
-            --marvel-white: #FFFFFF;
-        }
-
-        /* Pixel Art Utilities */
-        .pixel-corners {
-            clip-path: polygon(
-                0px 4px, 4px 4px, 4px 0px, 
-                calc(100% - 4px) 0px, calc(100% - 4px) 4px, 100% 4px,
-                100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), 
-                calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 
-                0px calc(100% - 4px)
-            );
-        }
-
-        .pixel-font {
-            font-family: 'Press Start 2P', 'Courier New', monospace;
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
-        }
-
-        .comic-font {
-            font-family: 'Bangers', 'Comic Sans MS', cursive;
-            letter-spacing: 0.05em;
-        }
-
-        /* Comic Animations */
-        @keyframes pixelGlow {
-            0%, 100% { text-shadow: 0 0 5px var(--marvel-yellow), 0 0 10px var(--marvel-yellow); }
-            50% { text-shadow: 0 0 10px var(--marvel-yellow), 0 0 20px var(--marvel-yellow); }
-        }
-
-        @keyframes comicPop {
-            0% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.05) rotate(1deg); }
-            100% { transform: scale(1) rotate(0deg); }
-        }
-
-        @keyframes heroEntry {
-            0% { transform: translateY(-50px) scale(0.8); opacity: 0; }
-            50% { transform: translateY(5px) scale(1.05); opacity: 0.8; }
-            100% { transform: translateY(0) scale(1); opacity: 1; }
-        }
-        
-        /* Marvel Button Styles */
-        .marvel-btn {
-            position: relative;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            transition: all 0.2s;
-            border: 3px solid black;
-            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
-        }
-
-        .marvel-btn:hover {
-            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
-            transform: translate(-2px, -2px);
-        }
-
-        .marvel-btn:active {
-            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
-            transform: translate(2px, 2px);
-        }
-
-        /* Comic Card Styles */
-        .comic-card {
-            border: 4px solid black;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .comic-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px);
-            background-size: 10px 10px;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        /* Upload Zone Styles */
-        .upload-zone {
-            border: 2px solid #e5e7eb;
-            transition: all 0.3s ease;
-            position: relative;
-            background-color: #f9fafb;
-        }
-
-        .upload-zone.drag-over {
-            border-color: var(--marvel-blue);
-            transform: scale(1.01);
-        }
-        
-        /* Progress Bar Styles */
-        .progress-bar {
-            background: #e9ecef;
-            border: 2px solid black;
-            height: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            transition: width 0.3s ease;
-            position: relative;
-            background: linear-gradient(90deg, var(--marvel-red) 0%, var(--marvel-yellow) 50%, var(--marvel-blue) 100%);
-        }
-
+        :root { --marvel-red: #ED1D24; --marvel-blue: #0078D4; --marvel-yellow: #FFD700; }
+        .pixel-corners { clip-path: polygon( 0px 4px, 4px 4px, 4px 0px, calc(100% - 4px) 0px, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0px calc(100% - 4px) ); }
+        .pixel-font { font-family: 'Press Start 2P', monospace; image-rendering: pixelated; }
+        .comic-font { font-family: 'Bangers', cursive; letter-spacing: 0.05em; }
+        @keyframes pixelGlow { 0%, 100% { text-shadow: 0 0 5px var(--marvel-yellow), 0 0 10px var(--marvel-yellow); } 50% { text-shadow: 0 0 10px var(--marvel-yellow), 0 0 20px var(--marvel-yellow); } }
+        .pixel-glow { animation: pixelGlow 2s infinite; }
+        .hero-entrance { animation: heroEntry 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        @keyframes heroEntry { 0% { transform: translateY(-50px) scale(0.8); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+        .marvel-btn { position: relative; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; border: 3px solid black; box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); }
+        .marvel-btn:hover { box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: translate(-2px, -2px); }
+        .comic-card { border: 4px solid black; position: relative; overflow: hidden; }
+        .comic-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px); background-size: 10px 10px; pointer-events: none; z-index: 1; }
+        .upload-zone { border: 2px solid #e5e7eb; transition: all 0.3s ease; position: relative; background-color: #f9fafb; }
+        .upload-zone.drag-over { border-color: var(--marvel-blue); }
+        .progress-fill { height: 100%; transition: width 0.3s ease; position: relative; background: linear-gradient(90deg, var(--marvel-red) 0%, var(--marvel-yellow) 50%, var(--marvel-blue) 100%); }
         .progress-fill.success { background: linear-gradient(90deg, #28a745 0%, #20c997 100%); }
         .progress-fill.error { background: linear-gradient(90deg, #dc3545 0%, #fd7e14 100%); }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.2) 4px, rgba(255,255,255,0.2) 8px);
-            animation: progress-stripes 1s linear infinite;
-        }
-
-        @keyframes progress-stripes {
-            0% { background-position: 0 0; }
-            100% { background-position: 20px 0; }
-        }
-
-        /* File Item Styles */
-        .file-item {
-            transition: all 0.3s ease;
-            border: 3px solid black;
-            position: relative;
-        }
-        .file-item.pending { background-color: #f8f9fa; }
-        .file-item.uploading { background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-color: var(--marvel-yellow); }
-        .file-item.success { background: linear-gradient(135deg, #d4edda 0%, #a3e9a4 100%); border-color: #28a745; }
-        .file-item.error { background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); border-color: #dc3545; }
-        
-        /* Status Icons */
-        .status-icon {
-            width: 24px; height: 24px;
-            display: flex; align-items: center; justify-content: center;
-            border: 2px solid black;
-            font-weight: bold;
-        }
-        .status-icon.pending { background: #6c757d; color: white; }
-        .status-icon.uploading { background: var(--marvel-yellow); color: black; animation: pulse 1s infinite; }
-        .status-icon.success { background: #28a745; color: white; }
-        .status-icon.error { background: #dc3545; color: white; }
-
-        /* Message Styles */
-        .message {
-            border: 3px solid black;
-            padding: 0.75rem;
-            position: relative;
-        }
+        .file-item, .explorer-item { transition: all 0.3s ease; border: 3px solid black; position: relative; }
+        .message { border: 3px solid black; padding: 0.75rem; position: relative; }
         .message.success { background: #d4edda; border-color: #28a745; }
         .message.error { background: #f8d7da; border-color: #dc3545; }
-        .message.loading { background: #fff3cd; border-color: var(--marvel-yellow); }
-        .message.info { background: #d1ecf1; border-color: var(--marvel-blue); }
-
-        /* Custom Scrollbar */
-        .file-list::-webkit-scrollbar { width: 8px; }
-        .file-list::-webkit-scrollbar-track { background: #f1f1f1; border: 1px solid black; }
-        .file-list::-webkit-scrollbar-thumb { background: linear-gradient(135deg, var(--marvel-red), var(--marvel-yellow)); border: 1px solid black; }
-        .file-list::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #ff4444, #ffff44); }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border: 1px solid black; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: linear-gradient(135deg, var(--marvel-red), var(--marvel-yellow)); border: 1px solid black; }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 p-4">
-    <!-- Background Pattern -->
-    <div class="fixed inset-0 opacity-10 pointer-events-none">
-        <div class="absolute inset-0" style="background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;"></div>
-    </div>
+    <div class="fixed inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;"></div>
 
-    <!-- Main Container -->
-    <div class="relative z-10 max-w-4xl mx-auto">
-        <!-- Header -->
-        <div class="text-center mb-8 hero-entrance">
-            <h1 class="text-5xl md:text-7xl font-bold text-yellow-400 pixel-font mb-4 pixel-glow inline-flex items-center gap-4">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-upload-cloud"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
-                UPLOAD HEROICO
-            </h1>
-            <p class="text-lg md:text-xl text-white comic-font">
-                Envie seus arquivos com poderes épicos!
-            </p>
-            <div class="mt-4 inline-block">
-                <div class="bg-yellow-400 text-black font-black text-sm md:text-lg px-4 md:px-6 py-2 md:py-3 rotate-3 border-4 border-black pixel-corners comic-hover">
-                    MÁXIMA VELOCIDADE!
+    <div class="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Coluna da Esquerda: Upload -->
+        <div>
+            <div class="text-center mb-8 hero-entrance">
+                <h1 class="text-5xl md:text-6xl font-bold text-yellow-400 pixel-font mb-4 pixel-glow inline-flex items-center gap-4">
+                     <i data-lucide="upload-cloud" class="w-12 h-12"></i>UPLOAD HEROICO
+                </h1>
+                <p class="text-lg md:text-xl text-white comic-font">Envie seus arquivos com poderes épicos!</p>
+            </div>
+            <div class="comic-card bg-white pixel-corners shadow-2xl">
+                <div class="bg-black text-white p-4 border-b-4 border-yellow-400">
+                    <h2 class="text-xl font-semibold pixel-font text-center flex items-center justify-center"><i data-lucide="shield-check" class="w-8 h-8 mr-3"></i>CENTRO DE UPLOAD</h2>
                 </div>
-            </div>
-        </div>
-
-        <!-- Upload Component -->
-        <div class="comic-card bg-white pixel-corners shadow-2xl">
-            <div class="bg-black text-white p-4 md:p-6 border-b-4 border-yellow-400">
-                <h2 class="text-xl md:text-2xl font-semibold pixel-font text-center flex items-center justify-center">
-                    <i data-lucide="shield-check" class="w-6 h-6 md:w-8 md:h-8 mr-3"></i>
-                    CENTRO DE UPLOAD
-                </h2>
-            </div>
-
-            <div class="p-4 md:p-6">
-                 <div class="border-2 border-dashed border-gray-400 p-2 pixel-corners">
-                    <div id="uploadZone" class="upload-zone pixel-corners min-h-64 flex flex-col items-center justify-center p-8 cursor-pointer relative">
-                        <div class="upload-content text-center">
-                            <i data-lucide="cloud-fog" class="w-16 h-16 md:w-20 md:h-20 mx-auto text-gray-400 mb-4"></i>
-                            <h3 class="text-xl md:text-2xl font-bold text-gray-700 comic-font mb-2">
-                                🚀 ARRASTE E SOLTE SEUS ARQUIVOS
-                            </h3>
-                            <p class="text-gray-600 comic-font mb-6">
-                                ou clique para selecionar arquivos do seu dispositivo
-                            </p>
-                             <button id="browseBtn" class="marvel-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 pixel-corners comic-hover">
-                                <i data-lucide="folder-open" class="w-5 h-5 inline mr-2"></i>
-                                <span class="pixel-font text-sm">PROCURAR ARQUIVOS</span>
-                            </button>
-                            <div class="mt-6 text-xs text-gray-500 comic-font space-y-1">
-                                <p>📁 Todos os tipos de arquivo aceitos</p>
-                                <p>⚡ Upload em blocos para máxima eficiência</p>
-                                <p>🛡️ Transferência segura e confiável</p>
+                <div class="p-4">
+                    <div class="border-2 border-dashed border-gray-400 p-2 pixel-corners">
+                        <div id="uploadZone" class="upload-zone pixel-corners flex flex-col items-center justify-center p-8 cursor-pointer relative">
+                            <div class="upload-content text-center">
+                                <i data-lucide="cloud-fog" class="w-16 h-16 md:w-20 md:h-20 mx-auto text-gray-400 mb-4"></i>
+                                <h3 class="text-xl md:text-2xl font-bold text-gray-700 comic-font mb-2">🚀 ARRASTE E SOLTE SEUS ARQUIVOS</h3>
+                                <p class="text-gray-600 comic-font mb-6">ou clique para selecionar arquivos do seu dispositivo</p>
+                                <button id="browseBtn" class="marvel-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 pixel-corners comic-hover">
+                                    <i data-lucide="folder-open" class="w-5 h-5 inline mr-2"></i>
+                                    <span class="pixel-font text-sm">PROCURAR ARQUIVOS</span>
+                                </button>
+                                <div class="mt-6 text-xs text-gray-500 comic-font space-y-1">
+                                    <p>📁 Todos os tipos de arquivo aceitos</p>
+                                    <p>⚡ Upload em blocos para máxima eficiência</p>
+                                    <p>🛡️ Transferência segura e confiável</p>
+                                </div>
                             </div>
+                            <input type="file" id="fileInput" multiple class="hidden">
                         </div>
-                        <input type="file" id="fileInput" multiple class="hidden">
                     </div>
+                    <div id="filesContainer" class="mt-4 hidden"><div id="filesList" class="file-list space-y-3 max-h-60 overflow-y-auto p-2 bg-gray-100 border-2 border-black custom-scrollbar"></div></div>
+                    <div id="messagesArea" class="mt-4"><div class="message success pixel-corners comic-font"><div class="flex items-center"><span class="text-xl mr-3">🚀</span><span class="text-sm">Sistema de Upload pronto para ação!</span></div></div></div>
                 </div>
-
-                <div id="filesContainer" class="mt-6 hidden">
-                    <div id="filesList" class="file-list space-y-3 max-h-96 overflow-y-auto p-2 bg-gray-100 border-2 border-black"></div>
-                </div>
-                
-                <div id="messagesArea" class="mt-4"></div>
             </div>
         </div>
-        <div class="text-center mt-8 text-white comic-font">
-            <p class="text-sm opacity-75">
-                🦸‍♂️ Powered by Marvel GP - Upload System v3.0 - Parallel Power
-            </p>
+
+        <!-- Coluna da Direita: Salão de Registos (NOVO) -->
+        <div>
+            <div class="text-center mb-8 hero-entrance" style="animation-delay: 0.2s;">
+                 <h1 class="text-5xl md:text-6xl font-bold text-yellow-400 pixel-font mb-4 pixel-glow inline-flex items-center gap-4">
+                     <i data-lucide="library" class="w-12 h-12"></i>SALÃO DE REGISTOS
+                </h1>
+                <p class="text-lg md:text-xl text-white comic-font">O histórico das suas missões!</p>
+            </div>
+            <div class="comic-card bg-white pixel-corners shadow-2xl">
+                 <div class="bg-black text-white p-4 border-b-4 border-yellow-400 flex justify-between items-center">
+                    <h2 class="text-xl font-semibold pixel-font flex items-center"><i data-lucide="archive" class="w-8 h-8 mr-3"></i>ARQUIVOS NO DRIVE</h2>
+                    <button id="refreshExplorerBtn" class="marvel-btn bg-blue-600 hover:bg-blue-700 text-white p-2 pixel-corners"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
+                </div>
+                <div id="explorerList" class="p-4 space-y-3 h-[60vh] overflow-y-auto custom-scrollbar">
+                    <!-- A lista de ficheiros será renderizada aqui -->
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
-
         const WORKER_URL = "https://upload.aserio.workers.dev";
 
         // DOM Elements
@@ -266,10 +107,12 @@
         const filesContainer = document.getElementById('filesContainer');
         const filesList = document.getElementById('filesList');
         const messagesArea = document.getElementById('messagesArea');
+        const explorerList = document.getElementById('explorerList');
+        const refreshExplorerBtn = document.getElementById('refreshExplorerBtn');
 
         // Utility Functions
         function formatBytes(bytes, decimals = 2) {
-            if (bytes === 0) return '0 Bytes';
+            if (!bytes || bytes === 0) return '0 Bytes';
             const k = 1024;
             const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -285,7 +128,7 @@
             messagesArea.appendChild(messageEl);
         }
         
-        // Main File Handling
+        // --- UPLOADER LOGIC ---
         function handleFiles(files) {
             if (files.length === 0) return;
             filesContainer.classList.remove('hidden');
@@ -296,12 +139,11 @@
             fileInput.value = '';
         }
 
-        // ResumableUploader Class
         class ResumableUploader {
             constructor(file) {
                 this.file = file;
                 this.uniqueId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-                this.chunkSize = 1024 * 1024 * 8; // 8MB Chunks
+                this.chunkSize = 1024 * 1024 * 8;
                 this.offset = 0;
                 this.startTime = Date.now();
                 this.createUI();
@@ -388,7 +230,7 @@
                     if (response.status === 308) { // Incomplete
                         this.offset = end;
                         this.onProgress();
-                        this.uploadChunk(); // next chunk
+                        this.uploadChunk();
                     } else if (response.ok) { // Complete
                         this.offset = this.file.size;
                         this.onProgress();
@@ -427,6 +269,7 @@
                 this.ui.percentage.textContent = 'Concluído!';
                 this.ui.speed.textContent = '';
                 this.ui.eta.textContent = '';
+                invalidateCacheAndRefresh(); // ATUALIZA O EXPLORADOR
             }
 
             onError(error) {
@@ -439,7 +282,45 @@
             }
         }
 
-        // Event Listeners
+        // --- EXPLORER LOGIC ---
+        async function fetchFiles() {
+            explorerList.innerHTML = `<p class="text-center comic-font p-4">🔍 A procurar registos...</p>`;
+            try {
+                const response = await fetch(`${WORKER_URL}/files`);
+                const data = await response.json();
+                if (!response.ok || !data.success) throw new Error(data.error || 'Falha ao obter a lista de ficheiros.');
+                renderFiles(data.files);
+            } catch (error) {
+                explorerList.innerHTML = `<p class="text-center comic-font p-4 text-red-600">❌ Erro ao carregar registos: ${error.message}</p>`;
+            }
+        }
+
+        function renderFiles(files) {
+            if (files.length === 0) {
+                explorerList.innerHTML = `<p class="text-center comic-font p-4">텅 Nenhum ficheiro encontrado.</p>`;
+                return;
+            }
+            explorerList.innerHTML = files.map(file => `
+                <div class="explorer-item bg-gray-50 hover:bg-blue-100 pixel-corners p-3 flex items-center gap-4">
+                    <img src="${file.iconLink}" class="w-8 h-8 flex-shrink-0" alt="ícone do ficheiro">
+                    <div class="flex-grow min-w-0">
+                        <a href="${file.webViewLink}" target="_blank" class="font-bold text-gray-800 comic-font truncate block" title="${file.name}">${file.name}</a>
+                        <p class="text-xs text-gray-600 pixel-font">${formatBytes(file.size || 0)} - ${new Date(file.createdTime).toLocaleDateString()}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function invalidateCacheAndRefresh() {
+            try {
+                await fetch(`${WORKER_URL}/invalidate-cache`, { method: 'POST' });
+            } catch (error) {
+                console.error("Falha ao invalidar o cache, mas a lista será atualizada de qualquer forma.", error);
+            }
+            await fetchFiles();
+        }
+
+        // --- Event Listeners and Initialization ---
         function setupEventListeners() {
             const preventDefaults = (e) => { e.preventDefault(); e.stopPropagation(); };
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -457,8 +338,12 @@
                 e.stopPropagation();
                 fileInput.click();
             });
-            uploadZone.addEventListener('click', () => fileInput.click());
+            uploadZone.addEventListener('click', (e) => {
+                if (e.target === browseBtn || browseBtn.contains(e.target)) return;
+                fileInput.click();
+            });
             fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+            refreshExplorerBtn.addEventListener('click', fetchFiles);
         }
         
         document.addEventListener('DOMContentLoaded', () => {
@@ -468,8 +353,8 @@
                 displayMessage('🚀 Sistema de Upload pronto para ação!', 'success');
             }
             setupEventListeners();
+            fetchFiles();
         });
     </script>
 </body>
 </html>
-
