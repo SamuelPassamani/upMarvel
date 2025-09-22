@@ -76,7 +76,6 @@
         uploadZone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
         
-        // Configura os eventos de arrastar e soltar
         ['dragover', 'drop'].forEach(eventName => {
             uploadZone.addEventListener(eventName, (e) => {
                 e.preventDefault();
@@ -88,16 +87,14 @@
         });
         uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
 
-        // Função principal para lidar com os ficheiros selecionados
         function handleFiles(files) {
             Array.from(files).forEach(file => {
                 const uploader = new ResumableUploader(file);
                 uploader.start();
             });
-            fileInput.value = ''; // Limpa o input
+            fileInput.value = '';
         }
         
-        // Função utilitária para formatar bytes
         function formatBytes(bytes) {
             if (bytes === 0) return '0 Bytes';
             const k = 1024;
@@ -106,17 +103,15 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        // --- Classe que gere o upload resumível para cada ficheiro ---
         class ResumableUploader {
             constructor(file) {
                 this.file = file;
                 this.uniqueId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-                this.chunkSize = 1024 * 1024 * 8; // 8MB por bloco
+                this.chunkSize = 1024 * 1024 * 8;
                 this.offset = 0;
                 this.createUI();
             }
 
-            // Cria a interface para o item do ficheiro
             createUI() {
                 const fileItem = document.createElement('div');
                 fileItem.id = `file-${this.uniqueId}`;
@@ -148,7 +143,6 @@
                 };
             }
 
-            // Inicia o processo de upload contactando o Worker
             async start() {
                  if (!WORKER_URL || WORKER_URL.includes("COLE_O_URL")) {
                     this.onError(new Error("O URL do Worker não está configurado."));
@@ -177,7 +171,6 @@
                 }
             }
 
-            // Envia cada pedaço (chunk) do ficheiro
             async uploadChunk() {
                 if (this.offset >= this.file.size) return;
 
@@ -185,19 +178,21 @@
                 const chunk = this.file.slice(this.offset, end);
 
                 try {
-                    const response = await fetch(this.uploadUrl, {
+                    // CORREÇÃO: Envia o bloco para a nova rota /upload no nosso Worker
+                    const response = await fetch(`${WORKER_URL}/upload`, {
                         method: 'PUT',
                         headers: {
-                            'Content-Range': `bytes ${this.offset}-${end - 1}/${this.file.size}`
+                            'Content-Range': `bytes ${this.offset}-${end - 1}/${this.file.size}`,
+                            'X-Upload-Url': this.uploadUrl
                         },
                         body: chunk
                     });
 
-                    if (response.status === 308) { // Upload em progresso
+                    if (response.status === 308) {
                         this.offset = end;
                         this.onProgress();
-                        this.uploadChunk(); // Envia o próximo bloco
-                    } else if (response.ok) { // Upload concluído
+                        this.uploadChunk();
+                    } else if (response.ok) {
                          this.offset = this.file.size;
                          this.onProgress();
                          this.onComplete();
@@ -210,14 +205,12 @@
                 }
             }
             
-            // Atualiza a interface de progresso
             onProgress() {
                 const percent = Math.round((this.offset / this.file.size) * 100);
                 this.ui.progressBar.style.width = `${percent}%`;
                 this.ui.progressText.textContent = `${percent}% - ${formatBytes(this.offset)} de ${formatBytes(this.file.size)}`;
             }
 
-            // Chamado quando o upload é concluído com sucesso
             onComplete() {
                 this.ui.progressBar.classList.add('success');
                 this.ui.progressText.textContent = '✅ Sucesso!';
@@ -226,7 +219,6 @@
                 this.ui.statusIcon.classList.add('bg-green-500');
             }
 
-            // Chamado em caso de erro
             onError(error) {
                 console.error(`[${this.file.name}] Erro no upload:`, error);
                 this.ui.item.classList.add('error');
