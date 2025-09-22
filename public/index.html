@@ -144,7 +144,7 @@
             }
 
             async start() {
-                 if (!WORKER_URL || WORKER_URL.includes("COLE_O_URL")) {
+                 if (!WORKER_URL || WORKER_URL.includes("https://upload.aserio.workers.dev")) {
                     this.onError(new Error("O URL do Worker não está configurado."));
                     return;
                 }
@@ -233,3 +233,4 @@
     </script>
 </body>
 </html>
+
