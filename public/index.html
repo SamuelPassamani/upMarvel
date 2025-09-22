@@ -328,8 +328,8 @@
     <script>
         lucide.createIcons();
 
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6cX2OVdRU0QKpVauOTpi00RPfPxTob-3R1azErc2YV88wPREbMR1i3qNGw8SJdlsrGg/exec";
-        const CHUNK_SIZE = 75 * 1024;
+        const WORKER_URL = "https://upload.aserio.workers.dev/"; // 👈 COLE SEU URL AQUI
+        const CHUNK_SIZE = 5 * 1024 * 1024; // Aumentado para 5MB para mais eficiência
         const CONCURRENT_UPLOADS = 4;
 
         const uploadZone = document.getElementById('uploadZone');
@@ -410,8 +410,8 @@
         }
 
         async function uploadFiles(filesToUpload) {
-            if (!SCRIPT_URL || SCRIPT_URL.includes("YOUR_APPS_SCRIPT")) {
-                displayMessage('URL do Google Apps Script não configurada.', 'error');
+            if (!WORKER_URL || WORKER_URL.includes("COLE_O_URL_DO_SEU_WORKER_AQUI")) {
+                displayMessage('URL do Worker não configurada.', 'error');
                 return;
             }
             displayMessage(`Iniciando upload de ${filesToUpload.length} arquivo(s)...`, 'loading');
@@ -442,7 +442,12 @@
                 setStatus('uploading', '🚀');
                 ui.percentage.textContent = 'Iniciando...';
                 
-                const startPayload = { action: 'start', fileName: file.name, mimeType: file.type || 'application/octet-stream', totalChunks };
+                const startPayload = { 
+                    action: 'start', 
+                    fileName: file.name, 
+                    mimeType: file.type || 'application/octet-stream', 
+                    fileSize: file.size 
+                };
                 const startResponse = await apiCall(startPayload);
                 if (startResponse.status !== 'success') throw new Error(`Falha ao iniciar: ${startResponse.message}`);
                 const { uploadId } = startResponse;
@@ -457,7 +462,14 @@
                     const chunk = file.slice(start, end);
                     const chunkBase64 = await toBase64(chunk);
                     
-                    const appendPayload = { action: 'append', uploadId, data: chunkBase64, chunkIndex };
+                    const appendPayload = { 
+                        action: 'append', 
+                        uploadId, 
+                        data: chunkBase64, 
+                        chunkIndex,
+                        totalChunks,
+                        totalSize: file.size
+                    };
                     await apiCall(appendPayload, true);
                     
                     uploadedChunkCount++;
@@ -477,10 +489,11 @@
 
                 await Promise.all(workerPromises);
 
-                ui.percentage.textContent = 'Finalizando...';
-                const finishPayload = { action: 'finish', uploadId };
-                const finishResponse = await apiCall(finishPayload);
-                if (finishResponse.status !== 'success') throw new Error(`Falha ao finalizar: ${finishResponse.message}`);
+                // A finalização agora é tratada pelo worker no último chunk.
+                // A chamada 'finish' é mantida para compatibilidade com a lógica, mas o worker apenas a confirma.
+                // ui.percentage.textContent = 'Finalizando...';
+                // const finishPayload = { action: 'finish', uploadId };
+                // await apiCall(finishPayload);
 
                 setStatus('success', '✅');
                 ui.percentage.textContent = 'Concluído!';
@@ -526,10 +539,11 @@
         }
         
         async function apiCall(payload, isAppend = false) {
-            const response = await fetch(SCRIPT_URL, {
+            const response = await fetch(WORKER_URL, {
                 method: 'POST',
                 body: JSON.stringify(payload),
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                // O worker espera JSON, então mudamos o Content-Type
+                headers: { 'Content-Type': 'application/json' },
             });
             const responseText = await response.text();
             if (!response.ok) throw new Error(`Erro de rede ${response.status}: ${responseText}`);
@@ -564,8 +578,8 @@
         }
         
         document.addEventListener('DOMContentLoaded', () => {
-             if (!SCRIPT_URL || SCRIPT_URL.includes("YOUR_APPS_SCRIPT")) {
-                displayMessage('⚠️ URL do Google Apps Script não configurada!', 'error');
+             if (!WORKER_URL || WORKER_URL.includes("COLE_O_URL_DO_SEU_WORKER_AQUI")) {
+                displayMessage('⚠️ URL do Cloudflare Worker não configurada!', 'error');
             } else {
                 displayMessage('🚀 Sistema de Upload pronto para ação!', 'success');
             }
