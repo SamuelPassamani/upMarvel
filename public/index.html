@@ -46,7 +46,7 @@
                 </h1>
                 <p class="text-lg md:text-xl text-white comic-font">Envie seus arquivos com poderes épicos!</p>
             </div>
-            <div class="comic-card bg-white pixel-corners shadow-2xl">
+            <div class="comic-card bg-white pixel-corners shadow-2xl h-full">
                 <div class="bg-black text-white p-4 border-b-4 border-yellow-400">
                     <h2 class="text-xl font-semibold pixel-font text-center flex items-center justify-center"><i data-lucide="shield-check" class="w-8 h-8 mr-3"></i>CENTRO DE UPLOAD</h2>
                 </div>
@@ -76,7 +76,7 @@
             </div>
         </div>
 
-        <!-- Coluna da Direita: Salão de Registos (NOVO) -->
+        <!-- Coluna da Direita: Salão de Registos (AJUSTADO) -->
         <div>
             <div class="text-center mb-8 hero-entrance" style="animation-delay: 0.2s;">
                  <h1 class="text-5xl md:text-6xl font-bold text-yellow-400 pixel-font mb-4 pixel-glow inline-flex items-center gap-4">
@@ -84,12 +84,12 @@
                 </h1>
                 <p class="text-lg md:text-xl text-white comic-font">O histórico das suas missões!</p>
             </div>
-            <div class="comic-card bg-white pixel-corners shadow-2xl">
+            <div class="comic-card bg-white pixel-corners shadow-2xl h-full flex flex-col">
                  <div class="bg-black text-white p-4 border-b-4 border-yellow-400 flex justify-between items-center">
                     <h2 class="text-xl font-semibold pixel-font flex items-center"><i data-lucide="archive" class="w-8 h-8 mr-3"></i>ARQUIVOS NO DRIVE</h2>
                     <button id="refreshExplorerBtn" class="marvel-btn bg-blue-600 hover:bg-blue-700 text-white p-2 pixel-corners"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
                 </div>
-                <div id="explorerList" class="p-4 space-y-3 h-[60vh] overflow-y-auto custom-scrollbar">
+                <div id="explorerList" class="p-4 space-y-3 flex-grow overflow-y-auto custom-scrollbar">
                     <!-- A lista de ficheiros será renderizada aqui -->
                 </div>
             </div>
