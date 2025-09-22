@@ -8,147 +8,349 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Bangers&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --marvel-red: #ED1D24; --marvel-blue: #0078D4; --marvel-yellow: #FFD700; --marvel-black: #1A1A1A; }
-        .pixel-corners { clip-path: polygon(0px 4px, 4px 4px, 4px 0px, calc(100% - 4px) 0px, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0px calc(100% - 4px)); }
-        .pixel-font { font-family: 'Press Start 2P', monospace; image-rendering: pixelated; }
-        .comic-font { font-family: 'Bangers', cursive; letter-spacing: 0.05em; }
-        @keyframes pixelGlow { 0%, 100% { box-shadow: 0 0 5px currentColor; } 50% { box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; } }
-        @keyframes comicPop { 0% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.05) rotate(1deg); } 100% { transform: scale(1) rotate(0deg); } }
-        @keyframes heroEntry { 0% { transform: translateY(-50px) scale(0.8); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
-        .comic-hover:hover { animation: comicPop 0.3s ease-in-out; }
-        .pixel-glow { animation: pixelGlow 2s infinite; }
-        .hero-entrance { animation: heroEntry 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        .marvel-btn { position: relative; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; border: 3px solid black; box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); }
-        .marvel-btn:hover { box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: translate(-2px, -2px); }
-        .marvel-btn:active { box-shadow: 2px 2px 0px 0px rgba(0,0,0,1); transform: translate(2px, 2px); }
-        .comic-card { border: 4px solid black; position: relative; overflow: hidden; }
-        .comic-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px); background-size: 10px 10px; pointer-events: none; z-index: 1; }
-        .upload-zone { border: 4px dashed #666; transition: all 0.3s ease; position: relative; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); }
-        .upload-zone.drag-over { border-color: var(--marvel-blue); background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); transform: scale(1.02); }
-        .progress-bar { background: #e9ecef; border: 2px solid black; height: 20px; position: relative; overflow: hidden; }
-        .progress-fill { height: 100%; transition: width 0.3s ease; background: linear-gradient(90deg, var(--marvel-red) 0%, var(--marvel-yellow) 50%, var(--marvel-blue) 100%); }
+        /* Marvel Theme Variables */
+        :root {
+            --marvel-red: #ED1D24;
+            --marvel-blue: #0078D4;
+            --marvel-yellow: #FFD700;
+            --marvel-black: #1A1A1A;
+            --marvel-white: #FFFFFF;
+        }
+
+        /* Pixel Art Utilities */
+        .pixel-corners {
+            clip-path: polygon(
+                0px 4px, 4px 4px, 4px 0px, 
+                calc(100% - 4px) 0px, calc(100% - 4px) 4px, 100% 4px,
+                100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), 
+                calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 
+                0px calc(100% - 4px)
+            );
+        }
+
+        .pixel-font {
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        .comic-font {
+            font-family: 'Bangers', 'Comic Sans MS', cursive;
+            letter-spacing: 0.05em;
+        }
+
+        /* Comic Animations */
+        @keyframes pixelGlow {
+            0%, 100% { text-shadow: 0 0 5px var(--marvel-yellow), 0 0 10px var(--marvel-yellow); }
+            50% { text-shadow: 0 0 10px var(--marvel-yellow), 0 0 20px var(--marvel-yellow); }
+        }
+
+        @keyframes comicPop {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.05) rotate(1deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        @keyframes heroEntry {
+            0% { transform: translateY(-50px) scale(0.8); opacity: 0; }
+            50% { transform: translateY(5px) scale(1.05); opacity: 0.8; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        
+        /* Marvel Button Styles */
+        .marvel-btn {
+            position: relative;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.2s;
+            border: 3px solid black;
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        }
+
+        .marvel-btn:hover {
+            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+            transform: translate(-2px, -2px);
+        }
+
+        .marvel-btn:active {
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+            transform: translate(2px, 2px);
+        }
+
+        /* Comic Card Styles */
+        .comic-card {
+            border: 4px solid black;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comic-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px);
+            background-size: 10px 10px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Upload Zone Styles */
+        .upload-zone {
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+            position: relative;
+            background-color: #f9fafb;
+        }
+
+        .upload-zone.drag-over {
+            border-color: var(--marvel-blue);
+            transform: scale(1.01);
+        }
+        
+        /* Progress Bar Styles */
+        .progress-bar {
+            background: #e9ecef;
+            border: 2px solid black;
+            height: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+            position: relative;
+            background: linear-gradient(90deg, var(--marvel-red) 0%, var(--marvel-yellow) 50%, var(--marvel-blue) 100%);
+        }
+
         .progress-fill.success { background: linear-gradient(90deg, #28a745 0%, #20c997 100%); }
         .progress-fill.error { background: linear-gradient(90deg, #dc3545 0%, #fd7e14 100%); }
-        .file-item { transition: all 0.3s ease; border: 3px solid black; position: relative; }
-        .status-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border: 2px solid black; font-weight: bold; }
-        .file-item.error, .status-icon.error { background-color: #f8d7da; border-color: #dc3545; color: black; }
-        .status-icon.error { background-color: #dc3545 !important; color: white !important; }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.2) 4px, rgba(255,255,255,0.2) 8px);
+            animation: progress-stripes 1s linear infinite;
+        }
+
+        @keyframes progress-stripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 20px 0; }
+        }
+
+        /* File Item Styles */
+        .file-item {
+            transition: all 0.3s ease;
+            border: 3px solid black;
+            position: relative;
+        }
+        .file-item.pending { background-color: #f8f9fa; }
+        .file-item.uploading { background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-color: var(--marvel-yellow); }
+        .file-item.success { background: linear-gradient(135deg, #d4edda 0%, #a3e9a4 100%); border-color: #28a745; }
+        .file-item.error { background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); border-color: #dc3545; }
+        
+        /* Status Icons */
+        .status-icon {
+            width: 24px; height: 24px;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid black;
+            font-weight: bold;
+        }
+        .status-icon.pending { background: #6c757d; color: white; }
+        .status-icon.uploading { background: var(--marvel-yellow); color: black; animation: pulse 1s infinite; }
+        .status-icon.success { background: #28a745; color: white; }
+        .status-icon.error { background: #dc3545; color: white; }
+
+        /* Message Styles */
+        .message {
+            border: 3px solid black;
+            padding: 0.75rem;
+            position: relative;
+        }
+        .message.success { background: #d4edda; border-color: #28a745; }
+        .message.error { background: #f8d7da; border-color: #dc3545; }
+        .message.loading { background: #fff3cd; border-color: var(--marvel-yellow); }
+        .message.info { background: #d1ecf1; border-color: var(--marvel-blue); }
+
+        /* Custom Scrollbar */
+        .file-list::-webkit-scrollbar { width: 8px; }
+        .file-list::-webkit-scrollbar-track { background: #f1f1f1; border: 1px solid black; }
+        .file-list::-webkit-scrollbar-thumb { background: linear-gradient(135deg, var(--marvel-red), var(--marvel-yellow)); border: 1px solid black; }
+        .file-list::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #ff4444, #ffff44); }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 p-4">
-    <div class="fixed inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;"></div>
+    <!-- Background Pattern -->
+    <div class="fixed inset-0 opacity-10 pointer-events-none">
+        <div class="absolute inset-0" style="background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;"></div>
+    </div>
+
+    <!-- Main Container -->
     <div class="relative z-10 max-w-4xl mx-auto">
+        <!-- Header -->
         <div class="text-center mb-8 hero-entrance">
-            <h1 class="text-4xl md:text-6xl font-bold text-yellow-400 pixel-font mb-4 pixel-glow">📤 UPLOAD HEROICO</h1>
-            <p class="text-lg md:text-xl text-white comic-font">Envie ficheiros de qualquer tamanho!</p>
+            <h1 class="text-5xl md:text-7xl font-bold text-yellow-400 pixel-font mb-4 pixel-glow inline-flex items-center gap-4">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-upload-cloud"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
+                UPLOAD HEROICO
+            </h1>
+            <p class="text-lg md:text-xl text-white comic-font">
+                Envie seus arquivos com poderes épicos!
+            </p>
+            <div class="mt-4 inline-block">
+                <div class="bg-yellow-400 text-black font-black text-sm md:text-lg px-4 md:px-6 py-2 md:py-3 rotate-3 border-4 border-black pixel-corners comic-hover">
+                    MÁXIMA VELOCIDADE!
+                </div>
+            </div>
         </div>
 
+        <!-- Upload Component -->
         <div class="comic-card bg-white pixel-corners shadow-2xl">
             <div class="bg-black text-white p-4 md:p-6 border-b-4 border-yellow-400">
                 <h2 class="text-xl md:text-2xl font-semibold pixel-font text-center flex items-center justify-center">
-                    <i data-lucide="upload-cloud" class="w-8 h-8 mr-3"></i>
+                    <i data-lucide="shield-check" class="w-6 h-6 md:w-8 md:h-8 mr-3"></i>
                     CENTRO DE UPLOAD
                 </h2>
             </div>
+
             <div class="p-4 md:p-6">
-                <div id="uploadZone" class="upload-zone pixel-corners flex items-center justify-center p-8 cursor-pointer">
-                    <div class="text-center">
-                         <i data-lucide="cloud-upload" class="w-16 h-16 mx-auto text-gray-400 mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-700 comic-font mb-2">🚀 ARRASTE E SOLTE OU CLIQUE</h3>
-                         <p class="text-xs text-gray-500 comic-font">(Até 5 Terabytes por ficheiro)</p>
+                 <div class="border-2 border-dashed border-gray-400 p-2 pixel-corners">
+                    <div id="uploadZone" class="upload-zone pixel-corners min-h-64 flex flex-col items-center justify-center p-8 cursor-pointer relative">
+                        <div class="upload-content text-center">
+                            <i data-lucide="cloud-fog" class="w-16 h-16 md:w-20 md:h-20 mx-auto text-gray-400 mb-4"></i>
+                            <h3 class="text-xl md:text-2xl font-bold text-gray-700 comic-font mb-2">
+                                🚀 ARRASTE E SOLTE SEUS ARQUIVOS
+                            </h3>
+                            <p class="text-gray-600 comic-font mb-6">
+                                ou clique para selecionar arquivos do seu dispositivo
+                            </p>
+                             <button id="browseBtn" class="marvel-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 pixel-corners comic-hover">
+                                <i data-lucide="folder-open" class="w-5 h-5 inline mr-2"></i>
+                                <span class="pixel-font text-sm">PROCURAR ARQUIVOS</span>
+                            </button>
+                            <div class="mt-6 text-xs text-gray-500 comic-font space-y-1">
+                                <p>📁 Todos os tipos de arquivo aceitos</p>
+                                <p>⚡ Upload em blocos para máxima eficiência</p>
+                                <p>🛡️ Transferência segura e confiável</p>
+                            </div>
+                        </div>
+                        <input type="file" id="fileInput" multiple class="hidden">
                     </div>
-                    <input type="file" id="fileInput" multiple class="hidden">
                 </div>
-                <div id="filesList" class="mt-4 space-y-3"></div>
+
+                <div id="filesContainer" class="mt-6 hidden">
+                    <div id="filesList" class="file-list space-y-3 max-h-96 overflow-y-auto p-2 bg-gray-100 border-2 border-black"></div>
+                </div>
+                
+                <div id="messagesArea" class="mt-4"></div>
             </div>
+        </div>
+        <div class="text-center mt-8 text-white comic-font">
+            <p class="text-sm opacity-75">
+                🦸‍♂️ Powered by Marvel GP - Upload System v3.0 - Parallel Power
+            </p>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
-        
-        const WORKER_URL = "https://upload.aserio.workers.dev"; // URL do seu Cloudflare Worker
 
+        const WORKER_URL = "https://upload.aserio.workers.dev";
+
+        // DOM Elements
         const uploadZone = document.getElementById('uploadZone');
         const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const filesContainer = document.getElementById('filesContainer');
         const filesList = document.getElementById('filesList');
+        const messagesArea = document.getElementById('messagesArea');
 
-        uploadZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        // Utility Functions
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
+        }
+
+        function displayMessage(message, type = 'info') {
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${type} pixel-corners comic-font`;
+            const icons = { success: '✅', error: '❌', loading: '⏳', info: 'ℹ️' };
+            messageEl.innerHTML = `<div class="flex items-center"><span class="text-xl mr-3">${icons[type]}</span><span class="text-sm">${message}</span></div>`;
+            messagesArea.innerHTML = '';
+            messagesArea.appendChild(messageEl);
+        }
         
-        ['dragover', 'drop'].forEach(eventName => {
-            uploadZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (eventName === 'dragover') uploadZone.classList.add('drag-over');
-                else uploadZone.classList.remove('drag-over');
-                if (eventName === 'drop') handleFiles(e.dataTransfer.files);
-            }, false);
-        });
-        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-
+        // Main File Handling
         function handleFiles(files) {
+            if (files.length === 0) return;
+            filesContainer.classList.remove('hidden');
             Array.from(files).forEach(file => {
                 const uploader = new ResumableUploader(file);
                 uploader.start();
             });
             fileInput.value = '';
         }
-        
-        function formatBytes(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
 
+        // ResumableUploader Class
         class ResumableUploader {
             constructor(file) {
                 this.file = file;
                 this.uniqueId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-                this.chunkSize = 1024 * 1024 * 8; // 8MB por pedaço
+                this.chunkSize = 1024 * 1024 * 8; // 8MB Chunks
                 this.offset = 0;
+                this.startTime = Date.now();
                 this.createUI();
             }
 
             createUI() {
                 const fileItem = document.createElement('div');
-                fileItem.id = `file-${this.uniqueId}`;
-                fileItem.className = 'file-item p-4 bg-gray-50 pixel-corners';
+                fileItem.id = `file-item-${this.uniqueId}`;
+                fileItem.className = 'file-item pending pixel-corners p-4';
                 fileItem.innerHTML = `
                     <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center space-x-3 min-w-0">
-                             <div class="status-icon bg-yellow-400 pixel-corners">🚀</div>
-                             <div class="min-w-0">
-                                <h4 class="font-bold text-gray-800 comic-font truncate" title="${this.file.name}">${this.file.name}</h4>
+                        <div class="flex items-center space-x-3 flex-1 min-w-0">
+                            <div class="status-icon pending pixel-corners">⏳</div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-gray-800 comic-font truncate" title="${this.file.name}">📄 ${this.file.name}</h4>
                                 <p class="text-sm text-gray-600 pixel-font">${formatBytes(this.file.size)}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="progress-bar pixel-corners">
-                        <div class="progress-fill"></div>
+                    <div class="progress-details">
+                        <div class="progress-bar pixel-corners mb-2"><div class="progress-fill" style="width: 0%"></div></div>
+                        <div class="flex justify-between items-center text-xs pixel-font">
+                            <span class="percentage text-gray-600">0%</span>
+                            <div class="progress-stats flex space-x-4">
+                                <span class="speed text-blue-600"></span>
+                                <span class="eta text-purple-600"></span>
+                            </div>
+                        </div>
+                        <div class="error-text mt-2 text-xs text-red-600 comic-font bg-red-100 p-2 pixel-corners border border-red-300 hidden"></div>
                     </div>
-                    <p class="progress-text text-right text-xs pixel-font mt-1 text-gray-600">A iniciar...</p>
-                    <div class="error-text text-xs text-red-600 comic-font mt-2 bg-red-100 p-2 pixel-corners border border-red-300 hidden"></div>
                 `;
                 filesList.prepend(fileItem);
-
                 this.ui = {
                     item: fileItem,
                     progressBar: fileItem.querySelector('.progress-fill'),
-                    progressText: fileItem.querySelector('.progress-text'),
+                    percentage: fileItem.querySelector('.percentage'),
+                    speed: fileItem.querySelector('.speed'),
+                    eta: fileItem.querySelector('.eta'),
+                    statusIcon: fileItem.querySelector('.status-icon'),
                     errorText: fileItem.querySelector('.error-text'),
-                    statusIcon: fileItem.querySelector('.status-icon')
                 };
             }
 
             async start() {
-                // CORREÇÃO: A verificação agora procura por um URL inválido ou um placeholder.
-                 if (!WORKER_URL || WORKER_URL.includes("COLE_O_URL_AQUI")) {
-                     this.onError(new Error("O URL do Worker não está configurado."));
-                     return;
-                 }
+                if (!WORKER_URL || WORKER_URL === "YOUR_WORKER_URL") {
+                    this.onError(new Error("URL do Worker não configurada."));
+                    return;
+                }
+                this.setStatus('uploading', '🚀');
                 try {
                     const response = await fetch(`${WORKER_URL}/start`, {
                         method: 'POST',
@@ -158,15 +360,11 @@
                             mimeType: this.file.type || 'application/octet-stream'
                         })
                     });
-
                     const data = await response.json();
-                    if (!response.ok || !data.success) {
-                        throw new Error(data.error || `Erro do servidor: ${response.statusText}`);
-                    }
+                    if (!response.ok || !data.success) throw new Error(data.error || `Erro do Servidor: ${response.statusText}`);
                     
                     this.uploadUrl = data.uploadUrl;
                     this.uploadChunk();
-
                 } catch (error) {
                     this.onError(error);
                 }
@@ -174,7 +372,6 @@
 
             async uploadChunk() {
                 if (this.offset >= this.file.size) return;
-
                 const end = Math.min(this.offset + this.chunkSize, this.file.size);
                 const chunk = this.file.slice(this.offset, end);
 
@@ -191,11 +388,11 @@
                     if (response.status === 308) { // Incomplete
                         this.offset = end;
                         this.onProgress();
-                        this.uploadChunk();
+                        this.uploadChunk(); // next chunk
                     } else if (response.ok) { // Complete
-                         this.offset = this.file.size;
-                         this.onProgress();
-                         this.onComplete();
+                        this.offset = this.file.size;
+                        this.onProgress();
+                        this.onComplete();
                     } else {
                         const errorBody = await response.text();
                         throw new Error(`Falha no envio do bloco: ${response.statusText} - ${errorBody}`);
@@ -205,31 +402,74 @@
                 }
             }
             
+            setStatus(status, icon) {
+                this.ui.item.className = `file-item ${status} pixel-corners p-4`;
+                this.ui.statusIcon.className = `status-icon ${status} pixel-corners`;
+                this.ui.statusIcon.textContent = icon;
+            }
+
             onProgress() {
                 const percent = Math.round((this.offset / this.file.size) * 100);
                 this.ui.progressBar.style.width = `${percent}%`;
-                this.ui.progressText.textContent = `${percent}% - ${formatBytes(this.offset)} de ${formatBytes(this.file.size)}`;
+                const elapsedTime = (Date.now() - this.startTime) / 1000;
+                const speed = elapsedTime > 0 ? this.offset / elapsedTime : 0;
+                const remainingBytes = this.file.size - this.offset;
+                const eta = speed > 0 ? remainingBytes / speed : 0;
+                
+                this.ui.percentage.textContent = `${percent}%`;
+                this.ui.speed.textContent = `⚡ ${formatBytes(speed)}/s`;
+                this.ui.eta.textContent = `⏱️ ${eta < 1 ? '< 1s' : Math.round(eta) + 's'}`;
             }
 
             onComplete() {
+                this.setStatus('success', '✅');
                 this.ui.progressBar.classList.add('success');
-                this.ui.progressText.textContent = '✅ Sucesso!';
-                this.ui.statusIcon.textContent = '✅';
-                this.ui.statusIcon.classList.remove('bg-yellow-400');
-                this.ui.statusIcon.classList.add('bg-green-500');
+                this.ui.percentage.textContent = 'Concluído!';
+                this.ui.speed.textContent = '';
+                this.ui.eta.textContent = '';
             }
 
             onError(error) {
                 console.error(`[${this.file.name}] Erro no upload:`, error);
-                this.ui.item.classList.add('error');
+                this.setStatus('error', '❌');
                 this.ui.progressBar.classList.add('error');
-                this.ui.progressText.textContent = '❌ Erro!';
+                this.ui.percentage.textContent = 'Erro!';
                 this.ui.errorText.textContent = `Detalhe: ${error.message}`;
                 this.ui.errorText.classList.remove('hidden');
-                this.ui.statusIcon.textContent = '❌';
-                this.ui.statusIcon.classList.remove('bg-yellow-400');
             }
         }
+
+        // Event Listeners
+        function setupEventListeners() {
+            const preventDefaults = (e) => { e.preventDefault(); e.stopPropagation(); };
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+            uploadZone.addEventListener('dragover', () => uploadZone.classList.add('drag-over'));
+            uploadZone.addEventListener('dragleave', (e) => {
+                if (!uploadZone.contains(e.relatedTarget)) uploadZone.classList.remove('drag-over');
+            });
+            uploadZone.addEventListener('drop', (e) => {
+                uploadZone.classList.remove('drag-over');
+                handleFiles(e.dataTransfer.files);
+            });
+            browseBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.click();
+            });
+            uploadZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+             if (!WORKER_URL || WORKER_URL === "YOUR_WORKER_URL") {
+                displayMessage('⚠️ URL do Cloudflare Worker não configurada!', 'error');
+            } else {
+                displayMessage('🚀 Sistema de Upload pronto para ação!', 'success');
+            }
+            setupEventListeners();
+        });
     </script>
 </body>
 </html>
+
