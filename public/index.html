@@ -18,7 +18,7 @@
         @keyframes heroEntry { 0% { transform: translateY(-50px) scale(0.8); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
         .marvel-btn { position: relative; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; border: 3px solid black; box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); }
         .marvel-btn:hover { box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: translate(-2px, -2px); }
-        .comic-card { border: 4px solid black; position: relative; overflow: hidden; }
+        .comic-card { border: 4px solid black; position: relative; overflow: hidden; display: flex; flex-direction: column; }
         .comic-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px); background-size: 10px 10px; pointer-events: none; z-index: 1; }
         .upload-zone { border: 2px solid #e5e7eb; transition: all 0.3s ease; position: relative; background-color: #f9fafb; }
         .upload-zone.drag-over { border-color: var(--marvel-blue); }
@@ -32,27 +32,29 @@
         .custom-scrollbar::-webkit-scrollbar { width: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border: 1px solid black; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: linear-gradient(135deg, var(--marvel-red), var(--marvel-yellow)); border: 1px solid black; }
+        .modal-content { animation: modalEntry 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        @keyframes modalEntry { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 p-4">
     <div class="fixed inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;"></div>
 
-    <div class="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         <!-- Coluna da Esquerda: Upload -->
-        <div>
+        <div class="flex flex-col h-full">
             <div class="text-center mb-8 hero-entrance">
                 <h1 class="text-5xl md:text-6xl font-bold text-yellow-400 pixel-font mb-4 pixel-glow inline-flex items-center gap-4">
                      <i data-lucide="upload-cloud" class="w-12 h-12"></i>UPLOAD HEROICO
                 </h1>
                 <p class="text-lg md:text-xl text-white comic-font">Envie seus arquivos com poderes épicos!</p>
             </div>
-            <div class="comic-card bg-white pixel-corners shadow-2xl h-full">
+            <div class="comic-card bg-white pixel-corners shadow-2xl flex-grow">
                 <div class="bg-black text-white p-4 border-b-4 border-yellow-400">
                     <h2 class="text-xl font-semibold pixel-font text-center flex items-center justify-center"><i data-lucide="shield-check" class="w-8 h-8 mr-3"></i>CENTRO DE UPLOAD</h2>
                 </div>
-                <div class="p-4">
-                    <div class="border-2 border-dashed border-gray-400 p-2 pixel-corners">
-                        <div id="uploadZone" class="upload-zone pixel-corners flex flex-col items-center justify-center p-8 cursor-pointer relative">
+                <div class="p-4 flex flex-col flex-grow">
+                    <div class="border-2 border-dashed border-gray-400 p-2 pixel-corners flex-grow">
+                        <div id="uploadZone" class="upload-zone pixel-corners h-full flex flex-col items-center justify-center p-8 cursor-pointer relative">
                             <div class="upload-content text-center">
                                 <i data-lucide="cloud-fog" class="w-16 h-16 md:w-20 md:h-20 mx-auto text-gray-400 mb-4"></i>
                                 <h3 class="text-xl md:text-2xl font-bold text-gray-700 comic-font mb-2">🚀 ARRASTE E SOLTE SEUS ARQUIVOS</h3>
@@ -76,15 +78,15 @@
             </div>
         </div>
 
-        <!-- Coluna da Direita: Salão de Registos (AJUSTADO) -->
-        <div>
+        <!-- Coluna da Direita: Salão de Registos -->
+        <div class="flex flex-col h-full">
             <div class="text-center mb-8 hero-entrance" style="animation-delay: 0.2s;">
                  <h1 class="text-5xl md:text-6xl font-bold text-yellow-400 pixel-font mb-4 pixel-glow inline-flex items-center gap-4">
                      <i data-lucide="library" class="w-12 h-12"></i>SALÃO DE REGISTOS
                 </h1>
                 <p class="text-lg md:text-xl text-white comic-font">O histórico das suas missões!</p>
             </div>
-            <div class="comic-card bg-white pixel-corners shadow-2xl h-full flex flex-col">
+            <div class="comic-card bg-white pixel-corners shadow-2xl flex-grow">
                  <div class="bg-black text-white p-4 border-b-4 border-yellow-400 flex justify-between items-center">
                     <h2 class="text-xl font-semibold pixel-font flex items-center"><i data-lucide="archive" class="w-8 h-8 mr-3"></i>ARQUIVOS NO DRIVE</h2>
                     <button id="refreshExplorerBtn" class="marvel-btn bg-blue-600 hover:bg-blue-700 text-white p-2 pixel-corners"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
@@ -95,6 +97,20 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal de Pré-visualização -->
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="modal-content comic-card bg-white pixel-corners shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div class="bg-black text-white p-4 border-b-4 border-yellow-400 flex justify-between items-center">
+                <h3 id="modalTitle" class="text-lg font-semibold pixel-font truncate">Pré-visualização</h3>
+                <button id="modalCloseBtn" class="marvel-btn bg-red-600 hover:bg-red-700 text-white p-2 pixel-corners"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="modalBody" class="p-4 flex-grow overflow-auto flex items-center justify-center bg-gray-100">
+                <!-- Conteúdo da pré-visualização -->
+            </div>
+        </div>
+    </div>
+
 
     <script>
         lucide.createIcons();
@@ -109,6 +125,11 @@
         const messagesArea = document.getElementById('messagesArea');
         const explorerList = document.getElementById('explorerList');
         const refreshExplorerBtn = document.getElementById('refreshExplorerBtn');
+        const previewModal = document.getElementById('previewModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+
 
         // Utility Functions
         function formatBytes(bytes, decimals = 2) {
@@ -269,7 +290,7 @@
                 this.ui.percentage.textContent = 'Concluído!';
                 this.ui.speed.textContent = '';
                 this.ui.eta.textContent = '';
-                invalidateCacheAndRefresh(); // ATUALIZA O EXPLORADOR
+                invalidateCacheAndRefresh();
             }
 
             onError(error) {
@@ -282,7 +303,7 @@
             }
         }
 
-        // --- EXPLORER LOGIC ---
+        // --- EXPLORER & PREVIEW LOGIC ---
         async function fetchFiles() {
             explorerList.innerHTML = `<p class="text-center comic-font p-4">🔍 A procurar registos...</p>`;
             try {
@@ -301,14 +322,54 @@
                 return;
             }
             explorerList.innerHTML = files.map(file => `
-                <div class="explorer-item bg-gray-50 hover:bg-blue-100 pixel-corners p-3 flex items-center gap-4">
+                <div class="explorer-item bg-gray-50 hover:bg-blue-100 pixel-corners p-3 flex items-center gap-4 cursor-pointer" 
+                     data-fileid="${file.id}" data-filename="${file.name}" data-mimetype="${file.mimeType}">
                     <img src="${file.iconLink}" class="w-8 h-8 flex-shrink-0" alt="ícone do ficheiro">
                     <div class="flex-grow min-w-0">
-                        <a href="${file.webViewLink}" target="_blank" class="font-bold text-gray-800 comic-font truncate block" title="${file.name}">${file.name}</a>
+                        <p class="font-bold text-gray-800 comic-font truncate" title="${file.name}">${file.name}</p>
                         <p class="text-xs text-gray-600 pixel-font">${formatBytes(file.size || 0)} - ${new Date(file.createdTime).toLocaleDateString()}</p>
                     </div>
                 </div>
             `).join('');
+        }
+
+        async function showPreview(fileId, fileName, mimeType) {
+            modalTitle.textContent = fileName;
+            modalBody.innerHTML = `<p class="text-center comic-font">A carregar pré-visualização...</p>`;
+            previewModal.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${WORKER_URL}/download/${fileId}`);
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error || 'Não foi possível carregar o ficheiro.');
+                }
+                
+                const blob = await response.blob();
+                const objectUrl = URL.createObjectURL(blob);
+                
+                let contentHTML = '';
+                if (mimeType.startsWith('image/')) {
+                    contentHTML = `<img src="${objectUrl}" class="max-w-full max-h-full object-contain">`;
+                } else if (mimeType.startsWith('video/')) {
+                    contentHTML = `<video src="${objectUrl}" controls class="max-w-full max-h-full"></video>`;
+                } else if (mimeType.startsWith('audio/')) {
+                    contentHTML = `<audio src="${objectUrl}" controls></audio>`;
+                } else {
+                    contentHTML = `<p class="text-center comic-font">Pré-visualização não suportada.<br><a href="${objectUrl}" download="${fileName}" class="marvel-btn bg-blue-600 text-white p-2 mt-4 inline-block">Descarregar</a></p>`;
+                }
+                modalBody.innerHTML = contentHTML;
+
+            } catch (error) {
+                 modalBody.innerHTML = `<p class="text-center comic-font text-red-600">❌ Erro ao carregar: ${error.message}</p>`;
+            }
+        }
+
+        function closePreview() {
+            const mediaElement = modalBody.querySelector('video, audio');
+            if (mediaElement) mediaElement.src = ''; // Interrompe a reprodução
+            modalBody.innerHTML = '';
+            previewModal.classList.add('hidden');
         }
         
         async function invalidateCacheAndRefresh() {
@@ -344,6 +405,19 @@
             });
             fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
             refreshExplorerBtn.addEventListener('click', fetchFiles);
+            
+            // Listeners do Modal
+            modalCloseBtn.addEventListener('click', closePreview);
+            previewModal.addEventListener('click', (e) => {
+                if (e.target === previewModal) closePreview();
+            });
+            explorerList.addEventListener('click', (e) => {
+                const item = e.target.closest('.explorer-item');
+                if (item) {
+                    const { fileid, filename, mimetype } = item.dataset;
+                    showPreview(fileid, filename, mimetype);
+                }
+            });
         }
         
         document.addEventListener('DOMContentLoaded', () => {
