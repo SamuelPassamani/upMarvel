@@ -1,0 +1,14 @@
+# Exemplo: se o arquivo anexado for "secret.txt", substitua NOME_DO_ARQUIVO.ext por secret.txt
+# Ignora arquivos com exatamente esse nome em qualquer pasta do repositório
+NOME_DO_ARQUIVO.ext
+**/NOME_DO_ARQUIVO.ext
+
+# Exemplo pronto (descomente e remova o placeholder acima se quiser usar este exemplo)
+# secret.txt
+# **/secret.txt
+
+# Entradas comuns opcionais
+node_modules/
+.env
+.DS_Store
+*.log
