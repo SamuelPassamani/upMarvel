@@ -107,7 +107,7 @@
             constructor(file) {
                 this.file = file;
                 this.uniqueId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-                this.chunkSize = 1024 * 1024 * 8;
+                this.chunkSize = 1024 * 1024 * 8; // 8MB por pedaço
                 this.offset = 0;
                 this.createUI();
             }
@@ -144,10 +144,11 @@
             }
 
             async start() {
-                 if (!WORKER_URL || WORKER_URL.includes("https://upload.aserio.workers.dev")) {
-                    this.onError(new Error("O URL do Worker não está configurado."));
-                    return;
-                }
+                // CORREÇÃO: A verificação agora procura por um URL inválido ou um placeholder.
+                 if (!WORKER_URL || WORKER_URL.includes("COLE_O_URL_AQUI")) {
+                     this.onError(new Error("O URL do Worker não está configurado."));
+                     return;
+                 }
                 try {
                     const response = await fetch(`${WORKER_URL}/start`, {
                         method: 'POST',
@@ -178,7 +179,6 @@
                 const chunk = this.file.slice(this.offset, end);
 
                 try {
-                    // CORREÇÃO: Envia o bloco para a nova rota /upload no nosso Worker
                     const response = await fetch(`${WORKER_URL}/upload`, {
                         method: 'PUT',
                         headers: {
@@ -188,11 +188,11 @@
                         body: chunk
                     });
 
-                    if (response.status === 308) {
+                    if (response.status === 308) { // Incomplete
                         this.offset = end;
                         this.onProgress();
                         this.uploadChunk();
-                    } else if (response.ok) {
+                    } else if (response.ok) { // Complete
                          this.offset = this.file.size;
                          this.onProgress();
                          this.onComplete();
@@ -233,4 +233,3 @@
     </script>
 </body>
 </html>
-
