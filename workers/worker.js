@@ -1,5 +1,21 @@
 // O conteúdo completo do seu index.html é guardado aqui.
 // O Worker irá servir esta página quando alguém aceder ao URL principal.
+/**
+ * @constant
+ * @type {string}
+ * @description
+ * HTML markup for the "Upload Heroico" web application interface.
+ * Includes styling, layout, and interactive elements for file upload and file explorer.
+ * Features:
+ * - Drag-and-drop and button-based file upload zone
+ * - Resumable chunked upload logic via ResumableUploader class
+ * - Progress bar, speed, ETA, and error handling for uploads
+ * - File explorer with preview and download capabilities
+ * - Modal for file previews (image, video, audio, or download link)
+ * - Uses TailwindCSS and Lucide icons for UI
+ * - Custom pixel/comic styling and animated transitions
+ * - All UI and event logic embedded in a single HTML string
+ */
 const htmlContent = `
 <!DOCTYPE html>
 <html lang="pt-BR">
